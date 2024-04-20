@@ -4,8 +4,8 @@ const upload = require('../../../middlewares/veterinaria/multer')
 const usersController = require("../../../controllers/Veterinaria/Admin/usersController");
 const Secure = require("../../../middlewares/secure/secure");
 
-router.post("/adminRegistration",upload.single('profile'),Secure(['admin']), usersController.adminRegister);
-router.post("/customerServiceRegistration",upload.single('profile'),Secure(['admin']), usersController.customerServiceRegister);
+router.post("/userRegistration",upload.single('profile'),Secure(['admin,masterAdmin']), usersController.adminRegister);
+
 router.post("/MasterAdminRegistration",upload.single('profile'), usersController.MasterAdminRegistration);
 router.post("/userLogins",usersController.userLogin );
 router.post("/verificationLink",usersController.sendForgetPasswordLink );

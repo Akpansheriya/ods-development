@@ -1,0 +1,16 @@
+{
+    "apps": [
+        {
+            "name": "ods_backend_main",
+            "script": "./index.js",
+            "watch": true,
+            "ignore_watch": [
+                "node_modules",
+                "public"
+            ],
+            "max_memory_restart": "300M",
+            "instances": 1,
+            "exec_mode": "fork"
+        }
+    ]
+}

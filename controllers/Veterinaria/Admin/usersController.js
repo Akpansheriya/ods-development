@@ -22,7 +22,7 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-const adminRegister = async (req, res) => {
+const userRegister = async (req, res) => {
   const email = req.body.email;
   
   const token = req.headers.authorization.split(" ")[1];
@@ -43,7 +43,7 @@ const adminRegister = async (req, res) => {
       unique:decoded.unique,
       identification: req.body.identification,
       phone: req.body.phone,
-      role: "admin",
+      role: req.body.role,
       profile: req.file
         ? req.protocol +
           "://" +
@@ -88,67 +88,7 @@ const adminRegister = async (req, res) => {
     }
   }
 };
-const customerServiceRegister = async (req, res) => {
-  const email = req.body.email;
-  const user = await Auth.findOne({ where: { email: email } });
-  const token = req.headers.authorization.split(" ")[1];
-  const decoded = jwt.verify(token, "hello$%#@!ADMIN___++");
-  if (user) {
-    return res.status(409).json({
-      message: "Mail exists",
-    });
-  } else {
-    const userData = {
-      name: req.body.name,
-      email: req.body.email,
-      unique:decoded.unique,
-      password: req.body.password,
-      identification: req.body.identification,
-      phone: req.body.phone,
-      role: "customerService",
-      profile: req.file
-        ? req.protocol +
-          "://" +
-          req.get("host") +
-          `/profile/profile/${req.file.filename}`
-        : "",
-      isverified: false,
-      isAdmin: req.body.role === "admin" ? true : false,
-      isMasterAdmin: req.body.role === "masterAdmin" ? true : false,
-      isCustomerService: req.body.role === "customerService" ? true : false,
-    };
-    if (req.body.password === req.body.confirmPassword) {
-      if (userData.email === "" || userData.email === null) {
-        return res.status(400).send({ message: "email is required" });
-      } else if (userData.name === "" || userData.name === null) {
-        return res.status(400).send({ message: "name is required" });
-      } else if (userData.role === "" || userData.role === null) {
-        return res.status(400).send({ message: "role is required" });
-      } else if (userData.profile === "" || userData.profile === null) {
-        return res.status(400).send({ message: "profile is required" });
-      } else if (userData.password === "" || userData.password === null) {
-        return res.status(400).send({ message: "password is required" });
-      } else if (
-        userData.confirmPassword === "" ||
-        userData.confirmPassword === null
-      ) {
-        return res.status(400).send({ message: "confirmPassword is required" });
-      } else {
-        Auth.create(userData).then((result) => {
-          console.log(result);
-          res.status(201).send({
-            message: "user created",
-            result: result,
-          });
-        });
-      }
-    } else {
-      return res
-        .status(400)
-        .send({ message: "Password and confirm password do not match." });
-    }
-  }
-};
+
 const MasterAdminRegistration = async (req, res) => {
   try {
     const email = req.body.email;
@@ -1281,8 +1221,7 @@ const updatePassword = async (req, res, next) => {
 };
 
 module.exports = {
-  adminRegister,
-  customerServiceRegister,
+  userRegister,
   MasterAdminRegistration,
   userLogin,
   sendPassword,
